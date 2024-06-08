@@ -65,7 +65,7 @@ const CGPA = () => {
         });
 
         const calcgpa = totalGradePoints / totalCredits;
-        setFinalCGPA(calcgpa.toFixed(2));
+        setFinalCGPA(calcgpa);
 
         setLoading(false);
     };
@@ -233,13 +233,14 @@ const CGPA = () => {
                         </Form>
                     </Col>
                 </Row>
-                <ToastContainer />
-            </Container>
-            {finalCGPA !== null && (
                 <div className="mt-5 text-center" style={{ color: "green" }}>
+                    
                     <h1>Your CGPA is {finalCGPA}</h1>
                 </div>
-            )}
+
+                <ToastContainer />
+            </Container>
+            
         </div>
     );
 };
