@@ -20,11 +20,17 @@ const CGPA = () => {
     const [values, setValues] = useState({
         creditscompleted: 160,
         cgpa: 9.00,
-        subject="",
-        subjectcredit=4,
-        subjectgrade="S",
+        subject:"",
+        subjectcredit:4,
+        subjectgrade:"S",
 
     })
+
+    const [loading, setLoading] = useState(false);
+
+    const handleChange=(e) ={
+        setValues({...values, [e.target.name]: e.target.value});
+    };
 
     return(
         <div style={{position: "relative", overflow: "hidden"}}>
@@ -124,17 +130,30 @@ const CGPA = () => {
                             <Form.Control type="text" name="subjectcredit" placeholder="Enter the credits for the subject" onChange={handleChange} value={values.subjectcredit} />
 
                         </Form.Group>
-                        <Form.Group controlId="formSubject" className="mt-3">
-                            <Form.Label className="text-white">Grade</Form.Label>
+                        <Form.Group controlId="formSubjectGrade" className="mt-3">
+                            <Form.Label className="text-white">Subject Grade</Form.Label>
                             <Form.Control type="text" name="grade" placeholder="Enter the grade receieved for the subject" onChange={handleChange} value={values.subjectgrade} />
 
                         </Form.Group>
+                        <div style={{ width:"100%", display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}
+                        className="mt-4">
+                            <Button type="submit" className="text-center mt-3 btnStyle" onClick={!loading?handleSubmit : null}
+                            disabled = {loading} >
+                                {loading ? "Calculating...": "Enter Details"}
+                            </Button>
+                            <p className="mt-3" style = {{color: "#9d9494"}}>
+                                Enter your till date credits completed, CGPA, along with the individual subject credits and grade
+                            </p>
+                        </div>
 
                     </Form>
-                    <
+    
                     </Col>
                 </Row>
+                <ToastContainer />
             </Container>
         </div>
-    )
-}
+    );
+};
+
+export default CGPA;
