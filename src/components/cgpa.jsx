@@ -1,5 +1,4 @@
 import React, { useCallback, useState } from "react";
-import ReactDOM from "react-dom";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
@@ -25,13 +24,33 @@ const CGPA = () => {
         subjects: [{ name: "", credit: 0, grade: "S" }],
     });
 
+    // Function to calculate CGPA
+    const calculateCGPA = () => {
+        const { creditscompleted, cgpa, subjects } = values;
+
+        let totalCredits = creditscompleted;
+        let totalGradePoints = cgpa * creditscompleted;
+
+        subjects.forEach((subject) => {
+            const { credit, grade } = subject;
+            totalCredits += Number(credit);
+            totalGradePoints += gradetable[grade] * Number(credit);
+        });
+
+        const calcgpa = totalGradePoints / totalCredits;
+        setFinalCGPA(calcgpa.toFixed(2));
+    };
+
+
     const [loading, setLoading] = useState(false);
+    const [finalCGPA, setFinalCGPA] = useState(null);
 
     const handleChange = (e, index) => {
         const { name, value } = e.target;
         const subjects = [...values.subjects];
         subjects[index][name] = value;
         setValues({ ...values, subjects });
+        calculateCGPA();
     };
 
     const gradetable = {
@@ -51,30 +70,44 @@ const CGPA = () => {
     }, []);
 
     const handleSubmit = async (e) => {
+        console.log('handle submit called');
         e.preventDefault();
         const { creditscompleted, cgpa, subjects } = values;
         setLoading(true);
+        console.log('creditscompleted:', creditscompleted);
+        console.log('cgpa:', cgpa);
+        console.log('subjects:', subjects);
 
+    
         let totalCredits = creditscompleted;
         let totalGradePoints = cgpa * creditscompleted;
+        console.log('totalCredits:', totalCredits);
+        console.log('totalGradePoints:', totalGradePoints);
 
+    
         subjects.forEach((subject) => {
             const { credit, grade } = subject;
             totalCredits += Number(credit);
             totalGradePoints += gradetable[grade] * Number(credit);
         });
-
+    
         const calcgpa = totalGradePoints / totalCredits;
+        console.log('Calculated CGPA:', calcgpa);  // Add this line
+        setFinalCGPA(calcgpa.toFixed(2));
 
-        document.getElementById("cgpafinal").innerHTML = `<h1 class="mt-5 text-center" style="color: green;">Your CGPA is ${calcgpa.toFixed(2)}</h1>`;
+        console.log('calcgpa:', calcgpa);
+
+    
         setLoading(false);
     };
+    
 
     const addSubject = () => {
         setValues({
             ...values,
             subjects: [...values.subjects, { name: "", credit: 0, grade: "S" }],
         });
+        calculateCGPA();
     };
 
     return (
@@ -174,7 +207,6 @@ const CGPA = () => {
                                     value={values.cgpa}
                                 />
                             </Form.Group>
-
                             {values.subjects.map((subject, index) => (
                                 <div key={index}>
                                     <Form.Group controlId={`formSubject${index}`} className="mt-3">
@@ -234,10 +266,14 @@ const CGPA = () => {
                         </Form>
                     </Col>
                 </Row>
-            <ToastContainer />
-        </Container>
-    <div id="cgpafinal" className="mt-5 text-center" style={{ color: "green" }}></div>
-    </div>
+                <ToastContainer />
+            </Container>
+            {finalCGPA !== null && (
+                <div className="mt-5 text-center" style={{ color: "green" }}>
+                    <h1>Your CGPA is {finalCGPA}</h1>
+                </div>
+            )}
+        </div>
     );
 };
 
