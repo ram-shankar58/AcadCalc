@@ -24,24 +24,6 @@ const CGPA = () => {
         subjects: [{ name: "", credit: 0, grade: "S" }],
     });
 
-    // Function to calculate CGPA
-    const calculateCGPA = () => {
-        const { creditscompleted, cgpa, subjects } = values;
-
-        let totalCredits = creditscompleted;
-        let totalGradePoints = cgpa * creditscompleted;
-
-        subjects.forEach((subject) => {
-            const { credit, grade } = subject;
-            totalCredits += Number(credit);
-            totalGradePoints += gradetable[grade] * Number(credit);
-        });
-
-        const calcgpa = totalGradePoints / totalCredits;
-        setFinalCGPA(calcgpa.toFixed(2));
-    };
-
-
     const [loading, setLoading] = useState(false);
     const [finalCGPA, setFinalCGPA] = useState(null);
 
@@ -50,7 +32,6 @@ const CGPA = () => {
         const subjects = [...values.subjects];
         subjects[index][name] = value;
         setValues({ ...values, subjects });
-        calculateCGPA();
     };
 
     const gradetable = {
@@ -70,44 +51,30 @@ const CGPA = () => {
     }, []);
 
     const handleSubmit = async (e) => {
-        console.log('handle submit called');
         e.preventDefault();
         const { creditscompleted, cgpa, subjects } = values;
         setLoading(true);
-        console.log('creditscompleted:', creditscompleted);
-        console.log('cgpa:', cgpa);
-        console.log('subjects:', subjects);
 
-    
         let totalCredits = creditscompleted;
         let totalGradePoints = cgpa * creditscompleted;
-        console.log('totalCredits:', totalCredits);
-        console.log('totalGradePoints:', totalGradePoints);
 
-    
         subjects.forEach((subject) => {
             const { credit, grade } = subject;
             totalCredits += Number(credit);
             totalGradePoints += gradetable[grade] * Number(credit);
         });
-    
+
         const calcgpa = totalGradePoints / totalCredits;
-        console.log('Calculated CGPA:', calcgpa);  // Add this line
         setFinalCGPA(calcgpa.toFixed(2));
 
-        console.log('calcgpa:', calcgpa);
-
-    
         setLoading(false);
     };
-    
 
     const addSubject = () => {
         setValues({
             ...values,
             subjects: [...values.subjects, { name: "", credit: 0, grade: "S" }],
         });
-        calculateCGPA();
     };
 
     return (
