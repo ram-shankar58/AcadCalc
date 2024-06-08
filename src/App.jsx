@@ -10,4 +10,4 @@ const App=() =>(
     <CGPA />
   </div>
 )
-export default App
+export default App;
