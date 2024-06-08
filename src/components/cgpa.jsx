@@ -22,15 +22,16 @@ const CGPA = () => {
     const [values, setValues] = useState({
         creditscompleted: 160,
         cgpa: 9.00,
-        subject: "",
-        subjectcredit: 4,
-        subjectgrade: "S",
+        subjects: [{ name: "", credit: 0, grade: "S" }],
     });
 
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        setValues({ ...values, [e.target.name]: e.target.value });
+    const handleChange = (e, index) => {
+        const { name, value } = e.target;
+        const subjects = [...values.subjects];
+        subjects[index][name] = value;
+        setValues({ ...values, subjects });
     };
 
     const gradetable = {
@@ -51,16 +52,29 @@ const CGPA = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { creditscompleted, cgpa, subjectcredit, subjectgrade } = values;
+        const { creditscompleted, cgpa, subjects } = values;
         setLoading(true);
 
-        let calcgpa = cgpa;
-        let v = cgpa * creditscompleted;
-        v += gradetable[subjectgrade] * subjectcredit;
-        calcgpa = v / (creditscompleted + subjectcredit);
+        let totalCredits = creditscompleted;
+        let totalGradePoints = cgpa * creditscompleted;
+
+        subjects.forEach((subject) => {
+            const { credit, grade } = subject;
+            totalCredits += Number(credit);
+            totalGradePoints += gradetable[grade] * Number(credit);
+        });
+
+        const calcgpa = totalGradePoints / totalCredits;
 
         document.getElementById("cgpafinal").innerHTML = `<h1 class="mt-5 text-center" style="color: green;">Your CGPA is ${calcgpa.toFixed(2)}</h1>`;
         setLoading(false);
+    };
+
+    const addSubject = () => {
+        setValues({
+            ...values,
+            subjects: [...values.subjects, { name: "", credit: 0, grade: "S" }],
+        });
     };
 
     return (
@@ -145,7 +159,7 @@ const CGPA = () => {
                                     type="number"
                                     placeholder="Enter total credits completed so far"
                                     name="creditscompleted"
-                                    onChange={handleChange}
+                                    onChange={(e) => setValues({ ...values, creditscompleted: e.target.value })}
                                     value={values.creditscompleted}
                                 />
                             </Form.Group>
@@ -156,40 +170,46 @@ const CGPA = () => {
                                     step="0.01"
                                     name="cgpa"
                                     placeholder="Enter the CGPA till now"
-                                    onChange={handleChange}
+                                    onChange={(e) => setValues({ ...values, cgpa: e.target.value })}
                                     value={values.cgpa}
                                 />
                             </Form.Group>
-                            <Form.Group controlId="formSubject" className="mt-3">
-                                <Form.Label className="text-white">Subject</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="subject"
-                                    placeholder="Enter the subject"
-                                    onChange={handleChange}
-                                    value={values.subject}
-                                />
-                            </Form.Group>
-                            <Form.Group controlId="formSubjectCredit" className="mt-3">
-                                <Form.Label className="text-white">Subject Credit</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    placeholder="Enter the credits for the subject"
-                                    name="subjectcredit"
-                                    onChange={handleChange}
-                                    value={values.subjectcredit}
-                                />
-                            </Form.Group>
-                            <Form.Group controlId="formSubjectGrade" className="mt-3">
-                                <Form.Label className="text-white">Subject Grade</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    name="subjectgrade"
-                                    placeholder="Enter the grade received for the subject"
-                                    onChange={handleChange}
-                                    value={values.subjectgrade}
-                                />
-                            </Form.Group>
+
+                            {values.subjects.map((subject, index) => (
+                                <div key={index}>
+                                    <Form.Group controlId={`formSubject${index}`} className="mt-3">
+                                        <Form.Label className="text-white">Subject</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="name"
+                                            placeholder="Enter the subject"
+                                            onChange={(e) => handleChange(e, index)}
+                                            value={subject.name}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group controlId={`formSubjectCredit${index}`} className="mt-3">
+                                        <Form.Label className="text-white">Subject Credit</Form.Label>
+                                        <Form.Control
+                                            type="number"
+                                            placeholder="Enter the credits for the subject"
+                                            name="credit"
+                                            onChange={(e) => handleChange(e, index)}
+                                            value={subject.credit}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group controlId={`formSubjectGrade${index}`} className="mt-3">
+                                        <Form.Label className="text-white">Subject Grade</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            name="grade"
+                                            placeholder="Enter the grade received for the subject"
+                                            onChange={(e) => handleChange(e, index)}
+                                            value={subject.grade}
+                                        />
+                                    </Form.Group>
+                                </div>
+                            ))}
+                            <Button className="mt-3" onClick={addSubject}>Add Subject</Button>
                             <div
                                 style={{
                                     width: "100%",
@@ -208,16 +228,16 @@ const CGPA = () => {
                                     {loading ? "Calculating..." : "Enter Details"}
                                 </Button>
                                 <p className="mt-3" style={{ color: "#9d9494" }}>
-                                    Enter your till date credits completed, CGPA, along with the individual subject credits and grade
+                                    Enter your till date credits completed, CGPA, along with the individual subject
                                 </p>
                             </div>
                         </Form>
                     </Col>
                 </Row>
-                <ToastContainer />
-            </Container>
-            <div id="cgpafinal" className="mt-5 text-center" style={{ color: "green" }}></div>
-        </div>
+            <ToastContainer />
+        </Container>
+    <div id="cgpafinal" className="mt-5 text-center" style={{ color: "green" }}></div>
+    </div>
     );
 };
 
