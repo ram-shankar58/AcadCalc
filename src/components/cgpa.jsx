@@ -5,6 +5,7 @@ import Particles from "react-tsparticles";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const CGPA = () => {
     const toastOptions = {
         position: "bottom-right",
@@ -93,10 +94,12 @@ const CGPA = () => {
                                 </Form.Group>
                             </div>
                         ))}
-                        <Button variant="primary" onClick={handleAddInput}>
+                        <Button variant="primary" onClick={handleAddInput} style="background-color: red; border: 2px solid red :hover{
+                        background-color: regb(75,11,11);}">
                             Add Subject
                         </Button>
-                        <Button variant="primary" type="submit" disabled={loading}>
+                        <Button variant="primary" type="submit" disabled={loading} style="background-color: red; border: 2px solid red :hover{
+                        background-color: regb(75,11,11);}">
                             Calculate
                         </Button>
                     </Form>
