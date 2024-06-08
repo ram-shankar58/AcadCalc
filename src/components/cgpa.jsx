@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useState } from "react";
+import ReactDOM from "react-dom/clients";
 import { Container, Row, Col, Form, Button } from "react-bootsrap";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
@@ -30,6 +31,39 @@ const CGPA = () => {
 
     const handleChange=(e) ={
         setValues({...values, [e.target.name]: e.target.value});
+    };
+
+    const gradetable{
+        "S":10,
+        "A":9,
+        "B":8,
+        "C":7,
+        "D":6
+
+
+
+    };
+
+    var calcgpa=0;
+
+    const handleSubmit = async(e) =>{
+        e.preventDefault();
+
+        const {creditscompleted, cgpa, subject, subjectcredit, subjectgrade}=values;
+        setLoading(true);
+
+   
+
+        calcgpa=cgpa;
+
+        let v=cgpa*creditscompleted;
+        v+=gradetable[subjectgrade]*subjectcredit;
+        calcgpa=v/(creditscompleted+subjectcredit);
+
+        let head=document.getElementById("cgpafinal");
+        head.appendChild(<h1 className="mt-5 text-center color: green">Your CGPA is {calcgpa} </h1>)
+
+
     };
 
     return(
@@ -152,7 +186,10 @@ const CGPA = () => {
                 </Row>
                 <ToastContainer />
             </Container>
+            <div id="cgpafinal" className="mt-5 text-center color:green">
+            </div>
         </div>
+        
     );
 };
 
