@@ -20,15 +20,20 @@ const CGPA = () => {
     const [values, setValues] = useState({
         creditscompleted: 160,
         cgpa: 9.00,
-        subject:"",
-        subjectcredit:4,
-        subjectgrade:"S",
+        subjects: [{name: "", credit: 4, grade: "S"}],
     })
 
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        setValues({...values, [e.target.name]: e.target.value});
+    const handleChange = (e, index) => {
+        const { name, value } = e.target;
+        const list = [...values.subjects];
+        list[index][name] = value;
+        setValues({...values, subjects: list});
+    };
+
+    const handleAddInput = () => {
+        setValues({...values, subjects: [...values.subjects, {name: "", credit: 4, grade: "S"}]});
     };
 
     const gradetable = {
@@ -44,14 +49,16 @@ const CGPA = () => {
     const handleSubmit = async(e) => {
         e.preventDefault();
 
-        const {creditscompleted, cgpa, subject, subjectcredit, subjectgrade} = values;
+        const {creditscompleted, cgpa, subjects} = values;
         setLoading(true);
 
         calcgpa = cgpa;
 
         let v = cgpa * creditscompleted;
-        v += gradetable[subjectgrade] * subjectcredit;
-        calcgpa = v / (creditscompleted + subjectcredit);
+        subjects.forEach(subject => {
+            v += gradetable[subject.grade] * subject.credit;
+            calcgpa = v / (creditscompleted + subject.credit);
+        });
 
         toast(`Your CGPA is ${calcgpa}`, toastOptions);
         setLoading(false);
@@ -70,18 +77,25 @@ const CGPA = () => {
                             <Form.Label>CGPA</Form.Label>
                             <Form.Control type="number" name="cgpa" value={values.cgpa} onChange={handleChange} />
                         </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Subject</Form.Label>
-                            <Form.Control type="text" name="subject" value={values.subject} onChange={handleChange} />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Subject Credit</Form.Label>
-                            <Form.Control type="number" name="subjectcredit" value={values.subjectcredit} onChange={handleChange} />
-                        </Form.Group>
-                        <Form.Group>
-                            <Form.Label>Subject Grade</Form.Label>
-                            <Form.Control type="text" name="subjectgrade" value={values.subjectgrade} onChange={handleChange} />
-                        </Form.Group>
+                        {values.subjects.map((subject, i) => (
+                            <div key={i}>
+                                <Form.Group>
+                                    <Form.Label>Subject</Form.Label>
+                                    <Form.Control type="text" name="name" value={subject.name} onChange={e => handleChange(e, i)} />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>Subject Credit</Form.Label>
+                                    <Form.Control type="number" name="credit" value={subject.credit} onChange={e => handleChange(e, i)} />
+                                </Form.Group>
+                                <Form.Group>
+                                    <Form.Label>Subject Grade</Form.Label>
+                                    <Form.Control type="text" name="grade" value={subject.grade} onChange={e => handleChange(e, i)} />
+                                </Form.Group>
+                            </div>
+                        ))}
+                        <Button variant="primary" onClick={handleAddInput}>
+                            Add Subject
+                        </Button>
                         <Button variant="primary" type="submit" disabled={loading}>
                             Calculate
                         </Button>
