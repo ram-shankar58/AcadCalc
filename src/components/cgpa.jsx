@@ -55,8 +55,8 @@ const CGPA = () => {
         const { creditscompleted, cgpa, subjects } = values;
         setLoading(true);
 
-        let totalCredits = creditscompleted;
-        let totalGradePoints = cgpa * creditscompleted;
+        let totalCredits = Number(creditscompleted);
+        let totalGradePoints = Number(cgpa) * Number(creditscompleted);
 
         subjects.forEach((subject) => {
             const { credit, grade } = subject;
@@ -159,7 +159,7 @@ const CGPA = () => {
                                     type="number"
                                     placeholder="Enter total credits completed so far"
                                     name="creditscompleted"
-                                    onChange={(e) => setValues({ ...values, creditscompleted: e.target.value })}
+                                    onChange={(e) => setValues({ ...values, creditscompleted: Number(e.target.value) })}
                                     value={values.creditscompleted}
                                 />
                             </Form.Group>
@@ -170,7 +170,7 @@ const CGPA = () => {
                                     step="0.01"
                                     name="cgpa"
                                     placeholder="Enter the CGPA till now"
-                                    onChange={(e) => setValues({ ...values, cgpa: e.target.value })}
+                                    onChange={(e) => setValues({ ...values, cgpa: Number(e.target.value) })}
                                     value={values.cgpa}
                                 />
                             </Form.Group>
